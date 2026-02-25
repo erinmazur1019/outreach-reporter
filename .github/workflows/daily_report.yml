@@ -1,7 +1,7 @@
 name: Daily Outreach Report
 
 on:
-  # Run every weekday at 09:00 UTC (adjust to match your timezone)
+  # Run every weekday at 09:00 EST (adjust to match your timezone)
   schedule:
     - cron: "0 9 * * 1-5"
 
