@@ -1,0 +1,15 @@
+# Core
+requests==2.32.3
+python-dotenv==1.0.1
+
+# Google Sheets
+gspread==6.1.2
+google-auth==2.29.0
+
+# Slack
+slack-sdk==3.27.2
+
+# FastAPI server (for slash command + scheduler deployment)
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+apscheduler==3.10.4

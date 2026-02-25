@@ -1,0 +1,66 @@
+name: Daily Outreach Report
+
+on:
+  # Run every weekday at 09:00 UTC (adjust to match your timezone)
+  schedule:
+    - cron: "0 9 * * 1-5"
+
+  # Allow manual trigger from the GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (no Sheets/Slack writes)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Persist manual_counts.json across runs ──────────────────────────
+      # The JSON file is committed to the repo so manual Telegram/Signal
+      # counts survive between workflow runs.
+      - name: Pull latest manual counts
+        run: git pull --ff-only || true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write service account JSON
+        run: echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}' > service_account.json
+
+      - name: Run daily report
+        env:
+          HUBSPOT_ACCESS_TOKEN: ${{ secrets.HUBSPOT_ACCESS_TOKEN }}
+          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: service_account.json
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_SIGNING_SECRET: ${{ secrets.SLACK_SIGNING_SECRET }}
+          SLACK_REPORT_CHANNEL: ${{ secrets.SLACK_REPORT_CHANNEL }}
+          HUBSPOT_LEAD_TYPE_PROPERTY: ${{ vars.HUBSPOT_LEAD_TYPE_PROPERTY || 'lead_type' }}
+          CREATOR_VALUES: ${{ vars.CREATOR_VALUES || 'creator,content_creator,model' }}
+          AGENCY_VALUES: ${{ vars.AGENCY_VALUES || 'agency,management_agency' }}
+          AFFILIATE_VALUES: ${{ vars.AFFILIATE_VALUES || 'affiliate,partner' }}
+        run: |
+          DRY_FLAG=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            DRY_FLAG="--dry-run"
+          fi
+          python main.py $DRY_FLAG
+
+      - name: Clean up service account key
+        if: always()
+        run: rm -f service_account.json
