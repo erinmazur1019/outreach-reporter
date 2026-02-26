@@ -50,6 +50,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_SIGNING_SECRET: ${{ secrets.SLACK_SIGNING_SECRET }}
           SLACK_REPORT_CHANNEL: ${{ secrets.SLACK_REPORT_CHANNEL }}
+          GOOGLE_WORKSHEET_NAME: ${{ vars.GOOGLE_WORKSHEET_NAME || 'Sheet1' }}
           HUBSPOT_LEAD_TYPE_PROPERTY: ${{ vars.HUBSPOT_LEAD_TYPE_PROPERTY || 'lead_type' }}
           CREATOR_VALUES: ${{ vars.CREATOR_VALUES || 'creator,content_creator,model' }}
           AGENCY_VALUES: ${{ vars.AGENCY_VALUES || 'agency,management_agency' }}
