@@ -10,7 +10,7 @@ Can be run three ways:
 import argparse
 import logging
 import sys
-from datetime import date
+from datetime import date, timedelta
 
 from src.config import cfg
 from src.hubspot_client import build_channel_and_category_counts
@@ -28,7 +28,8 @@ logger = logging.getLogger(__name__)
 
 
 def run_daily_report(dry_run: bool = False) -> DailyReport:
-    logger.info("=== Daily Outreach Report (%s) ===", date.today())
+    yesterday = date.today() - timedelta(days=1)
+    logger.info("=== Daily Outreach Report (%s) ===", yesterday)
 
     # 1. Pull manual counts (Telegram, Signal, LinkedIn supplement)
     manual = get_counts()
@@ -48,7 +49,7 @@ def run_daily_report(dry_run: bool = False) -> DailyReport:
 
     # 3. Build the report object
     report = DailyReport(
-        report_date=date.today(),
+        report_date=yesterday,
         channels=channels,
         categories=categories,
         unique_contact_ids=all_contact_ids,
