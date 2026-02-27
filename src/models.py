@@ -43,13 +43,18 @@ class DailyReport:
         return len(self.unique_contact_ids)
 
     def sheets_row(self) -> list:
-        """Return the row to append to Google Sheets (matches BizDev column order)."""
+        """Return the row to append to Google Sheets (columns A-D only).
+
+        Sheet layout:
+          A: Date
+          B: Creators Contacted
+          C: Agencies Contacted
+          D: Affiliates/Partners Contacted
+          E-G: Contracts Sent / Contracts Signed / Everflow Sign Ups — filled manually, not by this script
+        """
         return [
             str(self.report_date),
             self.total_creators,
-            self.channels.linkedin,
-            self.channels.whatsapp,
-            self.channels.telegram,
             self.categories.agencies,
             self.categories.affiliates,
         ]

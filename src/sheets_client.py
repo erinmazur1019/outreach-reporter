@@ -25,12 +25,9 @@ SCOPES = [
 # The order MUST match DailyReport.sheets_row().
 EXPECTED_HEADERS = [
     "Date",
-    "Total Creators",
-    "LinkedIn",
-    "WhatsApp",
-    "Telegram",
-    "Agencies",
-    "Affiliates",
+    "Creators Contacted",
+    "Agencies Contacted",
+    "Affiliates/Partners Contacted",
 ]
 
 
